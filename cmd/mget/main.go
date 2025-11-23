@@ -8,7 +8,7 @@ import (
 	"github.com/renato3x/mget/internal/mget"
 )
 
-const version = "0.2.0"
+const version = "0.3.2"
 
 func main() {
   args := cli.Args()
