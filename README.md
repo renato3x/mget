@@ -24,7 +24,15 @@ cd mget
 go build -o mget ./cmd/mget
 ```
 
-### Install Globally
+### Install with Go
+
+Install directly from GitHub:
+
+```bash
+go install github.com/renato3x/mget/cmd/mget@latest
+```
+
+Or install from a local clone:
 
 ```bash
 go install ./cmd/mget
