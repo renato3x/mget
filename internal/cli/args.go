@@ -11,11 +11,14 @@ type CmdArgs struct {
 func Args() *CmdArgs {
   var args CmdArgs
   
-  flag.StringVar(&args.Output, "output", "", "Output directory")
+  // Default output directory is current directory
+  defaultOutput := "."
+  
+  flag.StringVar(&args.Output, "output", defaultOutput, "Output directory")
   flag.BoolVar(&args.AudioOnly, "audio", false, "Download only the audio")
 
   // shorthand args
-  flag.StringVar(&args.Output, "o", "", "Output directory")
+  flag.StringVar(&args.Output, "o", defaultOutput, "Output directory")
   flag.BoolVar(&args.AudioOnly, "a", false, "Download only the audio")
  
   flag.Parse()
