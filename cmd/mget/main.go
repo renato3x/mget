@@ -15,4 +15,12 @@ func main() {
     os.Exit(1)
     return
   }
+
+  if err := cli.Download(args.Url, args.Output, args.AudioOnly); err != nil {
+    fmt.Println(err)
+    os.Exit(1)
+    return
+  }
+
+  os.Exit(0)
 }
