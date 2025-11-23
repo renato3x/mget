@@ -81,7 +81,7 @@ The project is organized into several packages:
 ### Download Process
 
 1. **URL Validation**: The tool validates and identifies the platform from the provided URL
-2. **Platform Detection**: Currently supports YouTube (with infrastructure for TikTok)
+2. **Platform Detection**: Currently supports YouTube
 3. **Format Selection**: Automatically selects the best available format matching the requested media type (video or audio)
 4. **Download**: Streams the media content with progress tracking
 5. **File Storage**: Saves the file with a UUID-based filename to `~/mget-downloads`
@@ -94,10 +94,6 @@ The project is organized into several packages:
 - Extracts audio in MP3 format
 - Automatically selects formats with audio channels
 - Uses the `kkdai/youtube/v2` library for YouTube API interaction
-
-#### Future Platforms
-
-The codebase includes infrastructure for TikTok support, though it's not yet implemented.
 
 ## Output Directory
 
@@ -155,7 +151,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Roadmap
 
-- [ ] TikTok support
 - [ ] Custom output directory option
 - [ ] Quality/format selection
 - [ ] Playlist support

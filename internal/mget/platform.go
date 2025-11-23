@@ -11,11 +11,6 @@ var platformHosts = map[string][]string{
 		"youtu.be",
 		"m.youtube.com",
 	},
-	"tiktok": {
-		"tiktok.com",
-		"vm.tiktok.com",
-		"m.tiktok.com",
-	},
 }
 
 func validatePlatformURL(str string) (bool, string) {
