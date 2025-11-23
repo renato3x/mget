@@ -1,4 +1,4 @@
-package cli
+package mget
 
 import (
 	"fmt"
@@ -6,18 +6,17 @@ import (
 	"strings"
 )
 
-func Download(url, output string, audioOnly bool) error {
-	isValid, platform := validatePlatformURL(url)
-
-	if !isValid {
-		return fmt.Errorf("invalid video URL")
-	}
-
-	if platform == "" {
-		return fmt.Errorf("unsupported website. accepted sites: %s", getAcceptedSites())
-	}
-
-	return nil
+var platformHosts = map[string][]string{
+	"youtube": {
+		"youtube.com",
+		"youtu.be",
+		"m.youtube.com",
+	},
+	"tiktok": {
+		"tiktok.com",
+		"vm.tiktok.com",
+		"m.tiktok.com",
+	},
 }
 
 func validatePlatformURL(str string) (bool, string) {
@@ -51,19 +50,6 @@ func normalizeHost(str string) string {
   return host
 }
 
-var platformHosts = map[string][]string{
-	"youtube": {
-		"youtube.com",
-		"youtu.be",
-		"m.youtube.com",
-	},
-	"tiktok": {
-		"tiktok.com",
-		"vm.tiktok.com",
-		"m.tiktok.com",
-	},
-}
-
 func identifyPlatform(host string) string {
 	for platform, hosts := range platformHosts {
 		for _, h := range hosts {
@@ -84,3 +70,4 @@ func getAcceptedSites() string {
 
 	return strings.Join(platforms, ", ")
 }
+
