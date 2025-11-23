@@ -1,7 +1,6 @@
 package mget
 
 import (
-	"fmt"
 	"net/url"
 	"strings"
 )
@@ -22,7 +21,6 @@ var platformHosts = map[string][]string{
 func validatePlatformURL(str string) (bool, string) {
 	parsedURL, err := url.ParseRequestURI(str)
 	if err != nil {
-    fmt.Println(err)
 		return false, ""
 	}
 
@@ -70,4 +68,3 @@ func getAcceptedSites() string {
 
 	return strings.Join(platforms, ", ")
 }
-

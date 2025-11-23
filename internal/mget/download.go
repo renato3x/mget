@@ -2,7 +2,7 @@ package mget
 
 import "fmt"
 
-func Download(url, output string, audioOnly bool) error {
+func Download(url string, audioOnly bool) error {
 	isValid, platform := validatePlatformURL(url)
 
 	if !isValid {

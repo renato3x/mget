@@ -17,7 +17,7 @@ func main() {
     return
   }
 
-  if err := mget.Download(args.Url, args.Output, args.AudioOnly); err != nil {
+  if err := mget.Download(args.Url, args.AudioOnly); err != nil {
     fmt.Println(err)
     os.Exit(1)
     return

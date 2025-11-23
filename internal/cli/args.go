@@ -4,21 +4,17 @@ import "flag"
 
 type CmdArgs struct {
 	Url       string
-	Output    string
 	AudioOnly bool
 }
 
 func Args() *CmdArgs {
   var args CmdArgs
   
-  // Default output directory is current directory
-  defaultOutput := "."
+  // Get user home directory and set fixed output directory
+  // homeDir, _ := os.UserHomeDir()
+  // args.Output = filepath.Join(homeDir, "mget-downloads")
   
-  flag.StringVar(&args.Output, "output", defaultOutput, "Output directory")
   flag.BoolVar(&args.AudioOnly, "audio", false, "Download only the audio")
-
-  // shorthand args
-  flag.StringVar(&args.Output, "o", defaultOutput, "Output directory")
   flag.BoolVar(&args.AudioOnly, "a", false, "Download only the audio")
  
   flag.Parse()
