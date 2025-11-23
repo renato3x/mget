@@ -1,6 +1,8 @@
 package mget
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func Download(url string, audioOnly bool) error {
 	isValid, platform := validatePlatformURL(url)
@@ -12,6 +14,17 @@ func Download(url string, audioOnly bool) error {
 	if platform == "" {
 		return fmt.Errorf("unsupported website. accepted sites: %s", getAcceptedSites())
 	}
+
+  var err error
+
+  switch platform {
+  case "youtube":
+    err = DownloadYoutube(url, audioOnly)
+  }
+
+  if err != nil {
+    return err
+  }
 
 	return nil
 }
