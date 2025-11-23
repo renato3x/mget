@@ -8,8 +8,16 @@ import (
 	"github.com/renato3x/mget/internal/mget"
 )
 
+const version = "0.2.0"
+
 func main() {
   args := cli.Args()
+
+  if args.Version {
+    fmt.Printf("mget version %s\n", version)
+    os.Exit(0)
+    return
+  }
 
   if args.Url == "" {
     showUsage()
@@ -34,6 +42,7 @@ func showUsage() {
   fmt.Println()
   fmt.Println("Flags:")
   fmt.Println("  -a, --audio    Download only the audio track (MP3 format)")
+  fmt.Println("  -v, --version  Show version information")
   fmt.Println()
   fmt.Println("Examples:")
   fmt.Println("  mget https://www.youtube.com/watch?v=VIDEO_ID")
