@@ -3,40 +3,84 @@ package cli
 import (
 	"fmt"
 	"net/url"
+	"strings"
 )
 
 func Download(url, output string, audioOnly bool) error {
-	isValid, urlData := isValidURL(url)
+	isValid, platform := validatePlatformURL(url)
 
 	if !isValid {
 		return fmt.Errorf("invalid video URL")
 	}
 
-	if !isValidWebsite(urlData.Host) {
+	if platform == "" {
 		return fmt.Errorf("unsupported website. accepted sites: %s", getAcceptedSites())
 	}
 
 	return nil
 }
 
-var allowedHosts = map[string]struct{}{
-	"youtube.com":    {},
-	"youtu.be":       {},
-	"tiktok.com":     {},
-	"www.tiktok.com": {},
-	"vm.tiktok.com":  {},
+func validatePlatformURL(str string) (bool, string) {
+	parsedURL, err := url.ParseRequestURI(str)
+	if err != nil {
+    fmt.Println(err)
+		return false, ""
+	}
+
+	host := normalizeHost(parsedURL.Host)
+
+	platform := identifyPlatform(host)
+	if platform != "" {
+		return true, platform
+	}
+
+	return true, ""
 }
 
-func isValidWebsite(host string) bool {
-	_, ok := allowedHosts[host]
-	return ok
+func normalizeHost(str string) string {
+  host := strings.ToLower(str)
+	
+	// Remove port if present
+	if idx := strings.Index(host, ":"); idx != -1 {
+		host = host[:idx]
+	}
+
+	// Remove www. to normalize
+	host = strings.TrimPrefix(host, "www.")
+
+  return host
 }
 
-func isValidURL(str string) (bool, *url.URL) {
-	data, err := url.ParseRequestURI(str)
-	return err == nil, data
+var platformHosts = map[string][]string{
+	"youtube": {
+		"youtube.com",
+		"youtu.be",
+		"m.youtube.com",
+	},
+	"tiktok": {
+		"tiktok.com",
+		"vm.tiktok.com",
+		"m.tiktok.com",
+	},
+}
+
+func identifyPlatform(host string) string {
+	for platform, hosts := range platformHosts {
+		for _, h := range hosts {
+			if host == h || strings.HasSuffix(host, "."+h) {
+				return platform
+			}
+		}
+	}
+
+	return ""
 }
 
 func getAcceptedSites() string {
-	return "YouTube, TikTok"
+	platforms := make([]string, 0, len(platformHosts))
+	for platform := range platformHosts {
+		platforms = append(platforms, platform)
+	}
+
+	return strings.Join(platforms, ", ")
 }
