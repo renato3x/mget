@@ -15,17 +15,11 @@ func Download(url string) error {
     return fmt.Errorf("Invalid url: %s", url)
   }
 
-  handled := false
   for _, provider := range providers {
     if provider.CanHandle(url) {
-      handled = true
       return provider.Handle(url)
     }
   }
 
-  if !handled {
-    return fmt.Errorf("No provider available for url: %s", url)
-  }
-
-  return nil
+  return fmt.Errorf("No provider available for url: %s", url)
 }
