@@ -6,10 +6,12 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"time"
 
 	survey "github.com/AlecAivazis/survey/v2"
 	youtube "github.com/kkdai/youtube/v2"
 	"github.com/renato3x/mget/internal/utils"
+	progressbar "github.com/schollz/progressbar/v3"
 )
 
 type YouTubeProvider struct {}
@@ -51,12 +53,7 @@ func (p *YouTubeProvider) selectOptions(formats youtube.FormatList) ([]youtube.F
   formatMap := make(map[string]*youtube.Format)
 
   for _, f := range formats {
-    label := ""
-    if f.Height > 0 {
-      label = fmt.Sprintf("[%d] Audio + Video - %s (%s)", f.ItagNo, f.QualityLabel, f.MimeType)
-    } else {
-      label = fmt.Sprintf("[%d] Audio only - (%s)", f.ItagNo, f.MimeType)
-    }
+    label :=p.getFormatOptionLabel(f)
     options = append(options, label)
     formatMap[label] = &f
   }
@@ -96,40 +93,73 @@ func (p *YouTubeProvider) downloadOptions(
 		return fmt.Errorf("Error creating output directory")
 	}
 
-  for _, f := range formats {
-    err := func(format youtube.Format) error {
-      fmt.Printf("Downloading: %d - %s...\n", format.ItagNo, format.MimeType)
-      stream, _, err := client.GetStream(video, &format)
-
-      if err != nil {
-        return err
-      }
-      defer stream.Close()
-
-      filename := utils.Slugify(fmt.Sprintf("%d %s %s", format.ItagNo, format.MimeType, video.Title))
-      ext := utils.GetFileExtensionByMimetype(format.MimeType)
-      filepath := filepath.Join(outputDir, filename+ext)
-      file, err := os.Create(filepath)
-
-      if err != nil {
-        return err
-      }
-      defer file.Close()
-
-      _, err = io.Copy(file, stream)
-      if err != nil {
-        return err
-      }
-
-      fmt.Printf("%s (%s) downloaded successfully\n", video.Title, format.MimeType)
-      
-      return nil
-    }(f)
+  for _, format := range formats {
+    label := p.getFormatOptionLabel(format)
+   
+    err := p.download(&format, client, video, outputDir)
     
     if err != nil {
-      fmt.Printf("Some error occurred downloading option %d - %s\n", f.ItagNo, f.MimeType)
+      fmt.Printf("Some error occurred downloading option %s\n", label)
     }
   }
 
   return nil
+}
+
+func (p *YouTubeProvider) createProgressBar(size int64, description string) *progressbar.ProgressBar {
+	return progressbar.NewOptions64(
+		size,
+		progressbar.OptionSetDescription(description),
+		progressbar.OptionSetWriter(os.Stderr),
+		progressbar.OptionShowBytes(true),
+		progressbar.OptionSetWidth(15),
+		progressbar.OptionThrottle(65 * time.Millisecond),
+		progressbar.OptionOnCompletion(func() {
+			fmt.Fprint(os.Stderr, "\n")
+		}),
+		progressbar.OptionSetTheme(progressbar.Theme{
+			Saucer:        "=",
+			SaucerHead:    ">",
+			SaucerPadding: " ",
+			BarStart:      "[",
+			BarEnd:        "]",
+		}),
+	)
+}
+
+func (p *YouTubeProvider) download(
+  format *youtube.Format,
+  client *youtube.Client,
+  video *youtube.Video,
+  outputDir string,
+) error {
+  stream, size, err := client.GetStream(video, format)
+  if err != nil {
+    return err
+  }
+  defer stream.Close()
+
+  filename := utils.Slugify(fmt.Sprintf("%d %s %s", format.ItagNo, format.MimeType, video.Title))
+  ext := utils.GetFileExtensionByMimetype(format.MimeType)
+  filepath := filepath.Join(outputDir, filename+ext)
+
+  file, err := os.Create(filepath)
+  if err != nil {
+    return err
+  }
+  defer file.Close()
+
+  label := p.getFormatOptionLabel(*format)
+  desc := "Downloading "+label
+  bar := p.createProgressBar(size, desc)
+  _, err = io.Copy(io.MultiWriter(file, bar), stream)
+  return err
+}
+
+func (p *YouTubeProvider) getFormatOptionLabel(format youtube.Format) string {
+  if format.Height > 0 {
+    return fmt.Sprintf("[%d] Audio + Video - %s (%s)", format.ItagNo, format.QualityLabel, format.MimeType)
+  }
+
+  return fmt.Sprintf("[%d] Audio only - (%s)", format.ItagNo, format.MimeType)
 }
