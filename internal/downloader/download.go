@@ -7,19 +7,19 @@ import (
 )
 
 var providers = []Provider{
-  &YouTubeProvider{},
+	&YouTubeProvider{},
 }
 
 func Download(url string) error {
-  if !utils.IsValidUrl(url) {
-    return fmt.Errorf("Invalid url: %s", url)
-  }
+	if !utils.IsValidUrl(url) {
+		return fmt.Errorf("Invalid url: %s", url)
+	}
 
-  for _, provider := range providers {
-    if provider.CanHandle(url) {
-      return provider.Handle(url)
-    }
-  }
+	for _, provider := range providers {
+		if provider.CanHandle(url) {
+			return provider.Handle(url)
+		}
+	}
 
-  return fmt.Errorf("No provider available for url: %s", url)
+	return fmt.Errorf("No provider available for url: %s", url)
 }
