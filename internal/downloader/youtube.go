@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 	"sync"
 
 	survey "github.com/AlecAivazis/survey/v2"
@@ -160,9 +161,10 @@ func (p *YouTubeProvider) download(
 }
 
 func (p *YouTubeProvider) getFormatOptionLabel(format youtube.Format) string {
+  ext := strings.ToUpper(utils.GetFileExtensionByMimetype(format.MimeType)[1:])
 	if format.Height > 0 {
-		return fmt.Sprintf("[%d] Audio + Video - %s (%s)", format.ItagNo, format.QualityLabel, format.MimeType)
+		return fmt.Sprintf("[%d] %s (%s)", format.ItagNo, format.QualityLabel, ext)
 	}
 
-	return fmt.Sprintf("[%d] Audio only - (%s)", format.ItagNo, format.MimeType)
+	return fmt.Sprintf("[%d] Audio (%s)", format.ItagNo, ext)
 }

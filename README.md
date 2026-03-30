@@ -112,9 +112,9 @@ $ mget https://www.youtube.com/watch?v=dQw4w9WgXcQ
 Rick Astley - Never Gonna Give You Up - 3m33s
 
 ? Select one or more options for download  [Use arrows to move, space to select, <right> to all, <left> to none, type to filter]
-> [ ]  [137] Audio + Video - 1080p (video/mp4; codecs="avc1.640028")
-  [ ]  [248] Audio + Video - 1080p (video/webm; codecs="vp9")
-  [ ]  [140] Audio only - (audio/mp4; codecs="mp4a.40.2")
+> [ ]  [137] 1080p (MP4)
+  [ ]  [248] 1080p (WEBM)
+  [ ]  [140] Audio (MP4)
   ...
 ```
 
